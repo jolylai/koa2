@@ -23,6 +23,7 @@
     "vuepress": "^0.14.9"
   },
   "dependencies": {
+    "bcrypt": "^3.0.4",
     "koa": "^2.7.0",
     "koa-views": "^6.1.5",
     "mongoose": "^5.4.15",

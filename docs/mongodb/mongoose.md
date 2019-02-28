@@ -1,50 +1,73 @@
 # mongoose
 
-## Koa 链接 mongodb
+> [mongoosedoc](https://mongoosedoc.top/docs/guide.html)
+
+## 链接 mongodb
 
 ```js
-const mongoose = require("mongoose");
-const db = "mongodb://localhost:/douban-trailer";
-// mongose 中的 Promise 与规范的 Promise 有差异
-mongoose.Promise = global.Promise;
+const mongoose = require('mongoose')
 
-exports.connect = () => {
-  let maxConnectTimes = 0;
+// 链连 test 数据库
+mongoose.connect("mongodb://localhost:/test")
 
-  return new Promise((resolve, reject) => {
-    if (process.env.NODE_ENV !== "production") {
-      mongoose.set("debug", true);
-    }
-    // 链接数据库
-    mongoose.connect(db);
+// 连接失败
+mongoose.connection.on("disconnected", () => {}）
 
-    // 尝试链接数据库失败
-    mongoose.connection.on("disconnected", () => {
-      maxConnectTimes++;
-      if (maxConnectTimes < 5) {
-        mongoose.connect(db);
-      } else {
-        throw new Error("骚年出大事啦，数据库连接不了啦！！！");
-      }
-    });
+// 连接异常
+mongoose.connection.on("error", () => {}）
 
-    // 数据库链接异常
-    mongoose.connection.on("error", () => {
-      reject(error);
-    });
-
-    // 数据库链接成功
-    mongoose.connection.once("open", () => {
-      // 创建model
-      const Dog = mongoose.model("Dog", { name: String });
-
-      const doga = new Dog({ name: "阿尔法" });
-      // 往数据库插入一条数据
-      doga.save().then(() => {
-        console.log("数据插入成功");
-      });
-      resolve();
-    });
-  });
-};
+// 连接成功
+mongoose.connection.once("open", () => {}）
 ```
+
+## Schemas
+
+```js
+// 引入Schema
+const mongoose = required("mongoose");
+const Schema = mongoose.Schema;
+
+// 创建一个 Schema
+const animalSchema = new Schema({ name: String, type: String });
+
+// 创建一个 model
+mongoose.model("Animal", animalSchema);
+```
+
+## 实例方法
+
+`documents` 是 `Models` 的实例。 `Document` 有很多自带的实例方法， 当然也可以自定义我们自己的方法。
+
+```js
+// 自定义实例方法
+animalSchema.methods.findSimilarTypes = fuction(){}
+
+// 现在Animal的实例都有 findSimilarTypes 方法
+const dog = new Amimal({ type: 'dog'})
+dog.findSimilarTypes()
+```
+
+::: tip
+
+- 重写 mongoose 的默认方法会造成无法预料的结果。
+- 不要在自定义方法中使用 ES6 箭头函数，会造成 this 指向错误。
+  :::
+
+## 静态方法
+
+```js
+animalSchema.statics.findName = fuction(name, cb){
+  return this.find({name: new RegExp(name, 'i')},cb)
+}
+
+const Animal = mongoose('Animal', animalSchema)
+
+Animal.findByName('Tom', function(err, animals){
+  console.log(animals)
+})
+```
+
+::: tip
+
+- 不要在静态方法中使用箭头函数
+  :::

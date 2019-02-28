@@ -1,7 +1,15 @@
 const mongoose = require("mongoose");
 const db = "mongodb://localhost:/douban-trailer";
+const glob = require("glob");
+const { resolve } = require("path");
+
 // mongose 中的 Promise 与规范的 Promise 有差异
 mongoose.Promise = global.Promise;
+
+//  注册所有的Schema
+exports.initSchema = () => {
+  glob.sync(resolve(__dirname, "./schema", "**/*.js")).forEach(require);
+};
 
 exports.connect = () => {
   let maxConnectTimes = 0;
@@ -30,14 +38,14 @@ exports.connect = () => {
 
     // 数据库链接成功
     mongoose.connection.once("open", () => {
-      // 创建model
-      const Dog = mongoose.model("Dog", { name: String });
+      // // 创建model
+      // const Dog = mongoose.model("Dog", { name: String });
 
-      const doga = new Dog({ name: "阿尔法" });
-      // 往数据库插入一条数据
-      doga.save().then(() => {
-        console.log("数据插入成功");
-      });
+      // const doga = new Dog({ name: "阿尔法" });
+      // // 往数据库插入一条数据
+      // doga.save().then(() => {
+      //   console.log("数据插入成功");
+      // });
       resolve();
     });
   });

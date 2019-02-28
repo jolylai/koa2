@@ -21,7 +21,7 @@ function getMongoDBSiderBar() {
     {
       title: "MongoDB",
       collapsable: false,
-      children: ["", "install"]
+      children: ["", "install", "mongoose"]
     }
   ];
 }
